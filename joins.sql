@@ -53,6 +53,45 @@ on region.id = sales_reps.region_id
 join accounts
 on sales_reps.id = accounts.sales_rep_id
 join orders
-on accounts.id = orders.account_id
+on accounts.id = orders.account_id;
+
+-- NOTICE THE DIFFERENCE BETWEEN THE FOLLWING COMMENTED QUERIES
+
+/*
+SELECT orders.*, accounts.*
+FROM orders
+LEFT JOIN accounts
+ON orders.account_id = accounts.id
+AND accounts.sales_rep_id = 321500;
+*/
+
+------------------------------
+/*
+SELECT orders.*, accounts.*
+FROM orders
+LEFT JOIN accounts
+ON orders.account_id = accounts.id
+WHERE accounts.sales_rep_id = 321500;
+*/
+
+
+/* QUESTION
+
+What are the different channels used by account id 1001? Your final table should have only 2 columns: account name and the different channels.
+You can try SELECT DISTINCT to narrow down the results to only the unique values.
+*/
+
+
+select distinct accounts.name, web_events.channel, accounts.id
+from accounts
+join web_events
+on accounts.id = web_events.account_id
+where accounts.id = 1001
+
+
+
+
+
+
 
 
