@@ -178,3 +178,42 @@ ORDER BY occurrence DESC;
 -- ON s.id = a.sales_rep_id
 -- GROUP BY s.name, w.channel
 -- ORDER BY num_events DESC;
+ -------------- Date Functions---------
+ /* 1.
+Find the sales in terms of total dollars for all orders in each year, ordered from
+greatest to least. Do you notice any trends in the yearly sales totals?
+
+*/
+SELECT date_trunc('year',
+
+								occurred_at) AS YEAR,
+	sum(total_amt_usd)
+FROM orders
+GROUP BY 1
+ORDER BY 1 ;
+
+/* 2.
+Which month did Parch & Posey have the greatest sales in terms of total dollars?
+Are all months evenly represented by the dataset?
+*/ --
+
+SELECT date_part('month',
+
+								occurred_at) AS MONTH,
+	sum(total_amt_usd)
+FROM orders
+GROUP BY 1
+ORDER BY 2 DESC;
+
+-- Answer: 12th month = December has the greatest sales
+ /*
+In which month of which year did Walmart spend the most on gloss paper in terms of dollars?
+*/
+SELECT date_trunc('month', o.occurred_at),
+	sum(o.gloss_amt_usd) AS gloss_total
+FROM accounts a
+JOIN orders o ON a.id = o.account_id
+WHERE a.name = 'Walmart'
+GROUP BY 1
+ORDER BY 2 DESC
+LIMIT 1;
