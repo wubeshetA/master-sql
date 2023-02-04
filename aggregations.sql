@@ -209,7 +209,9 @@ ORDER BY 2 DESC;
  /*
 In which month of which year did Walmart spend the most on gloss paper in terms of dollars?
 */
-SELECT date_trunc('month', o.occurred_at),
+SELECT date_trunc('month',
+
+								o.occurred_at),
 	sum(o.gloss_amt_usd) AS gloss_total
 FROM accounts a
 JOIN orders o ON a.id = o.account_id
@@ -217,3 +219,48 @@ WHERE a.name = 'Walmart'
 GROUP BY 1
 ORDER BY 2 DESC
 LIMIT 1;
+
+-- -------------- CASE ------------
+ /* Write a query to display for each order, the account ID, the total amount of the order,
+ and the level of the order - ‘Large’ or ’Small’ - depending on if the order is $3000 or more, or smaller than $3000.
+ */
+SELECT id,
+	total_amt_usd,
+	CASE
+					WHEN total_amt_usd > 3000 THEN 'Large'
+					ELSE 'Small'
+	END AS LEVEL
+FROM orders;
+
+/*
+Write a query to display the number of orders in each of three categories, based on the total number of items in each order.
+The three categories are: 'At Least 2000', 'Between 1000 and 2000' and 'Less than 1000'.
+*/
+SELECT CASE
+WHEN total >= 2000 THEN 'At Least 2000'
+WHEN total >= 1000 AND total < 2000 THEN 'Between 1000 and 2000'
+ELSE 'Less than 1000' END AS order_category,
+count(*) AS order_count
+FROM orders
+GROUP BY 1 ;
+
+/*
+We would like to understand 3 different branches of customers based on the amount associated with their purchases.
+The top branch includes anyone with a Lifetime Value (total sales of all orders) greater than 200,000 usd.
+The second branch is between 200,000 and 100,000 usd. The lowest branch is anyone under 100,000 usd.
+Provide a table that includes the level associated with each account. You should provide the account name,
+the total sales of all orders for the customer, and the level. Order with the top spending customers listed first.
+*/
+
+
+SELECT a.name,
+	sum(o.total_amt_usd) AS total_usd,
+	CASE
+	WHEN sum(o.total_amt_usd) >= 200000 THEN 'highest'
+	WHEN sum(o.total_amt_usd) >= 100000 AND sum(o.total_amt_usd) < 200000 THEN 'middle'
+	ELSE 'lowest' END AS LEVEL
+FROM accounts a
+JOIN orders o ON a.id = o.account_id
+GROUP BY a.name
+ORDER BY total_usd DESC
+
