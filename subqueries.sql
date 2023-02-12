@@ -31,5 +31,40 @@ WHERE date_trunc('month', occurred_at) =
 		(SELECT date_trunc('month', min(occurred_at))
 			FROM orders)
 			
-			
-			
+;
+-- QUIZES
+/*
+1. Provide the name of the sales_rep in each region with the largest amount of total_amt_usd sales.
+*/
+select t3.sales_rep, t2.region, t2.total_max
+from
+(SELECT region, max(total) total_max
+FROM (SELECT s.name sales_rep,
+		r.name region,
+		sum(o.total_amt_usd) total
+	FROM region r
+	JOIN sales_reps s ON r.id = s.region_id
+	JOIN accounts a ON a.sales_rep_id = s.id
+	JOIN orders o ON o.account_id = a.id
+	GROUP BY s.name, r.name
+	ORDER BY 3 desc) as t1
+GROUP BY 1) as t2
+
+JOIN
+
+(SELECT s.name sales_rep,
+		r.name region,
+		sum(o.total_amt_usd) total
+	FROM region r
+	JOIN sales_reps s ON r.id = s.region_id
+	JOIN accounts a ON a.sales_rep_id = s.id
+	JOIN orders o ON o.account_id = a.id
+	GROUP BY s.name, r.name) AS t3
+
+ON t2.region = t3.region and t3.total = t2.total_max
+
+
+/*
+2. For the region with the largest (sum) of sales total_amt_usd,
+how many total (count) orders were placed?
+*/
