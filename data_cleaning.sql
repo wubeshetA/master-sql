@@ -87,3 +87,27 @@ FROM (SELECT name, CASE WHEN LEFT(UPPER(name), 1) IN ('A','E','I','O','U')
              CASE WHEN LEFT(UPPER(name), 1) IN ('A','E','I','O','U') 
                           THEN 0 ELSE 1 END AS other
             FROM accounts) t1;
+			
+			
+-- Concatination
+
+/*
+Suppose the company wants to assess the performance of all the sales representatives.
+Each sales representative is assigned to work in a particular region.
+To make it easier to understand for the HR team, display the concatenated sales_reps.id, ‘_’ (underscore),
+and region.name as EMP_ID_REGION for each sales representative.
+*/
+
+select s.id, r.name, concat(s.id, '_', r.name) as EMP_ID_REGION
+from region r
+join sales_reps s on s.region_id = r.id
+
+-- POSITION
+
+/*
+Q. split the name records in name column of sales_reps in to first_name and last_name
+*/
+
+select name, left(name, strpos(name, ' ') - 1) first_name, 
+right(name, length(name) - strpos(name, ' ')) as last_name
+from sales_reps limit 5;
