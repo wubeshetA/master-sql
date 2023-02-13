@@ -111,3 +111,18 @@ Q. split the name records in name column of sales_reps in to first_name and last
 select name, left(name, strpos(name, ' ') - 1) first_name, 
 right(name, length(name) - strpos(name, ' ')) as last_name
 from sales_reps limit 5;
+
+-- CONCAT and STRPOS
+
+/*
+Q1. Each company in the accounts table wants to create an email address for each primary_poc.
+The email address should be the first name of the primary_poc . last name primary_poc @ company name .com.
+*/
+select concat(first_name, '.', last_name, '@', company_name, '.com') as email
+from
+	(select replace(name, ' ', '') company_name, 
+		left(primary_poc, strpos(primary_poc, ' ') - 1) as first_name, 
+		right(primary_poc, length(primary_poc) - strpos(primary_poc, ' ')) as last_name
+	from accounts) t1
+order by 1
+
