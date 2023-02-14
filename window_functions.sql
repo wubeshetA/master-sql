@@ -42,3 +42,33 @@ SELECT id,
 	total,
 	row_number() over(PARTITION BY account_id ORDER BY total DESC) AS total_rank
 FROM orders;
+
+
+-- Comparing a Row to Previous Row - LAG
+
+select account_id, standard_sum,
+lag(standard_sum) over (order by standard_sum),
+standard_sum - lag(standard_sum) over (order by standard_sum) as lag_difference
+
+from(
+	select
+		account_id,
+		sum(standard_qty) standard_sum
+	from orders
+	group by 1
+	) sum
+	
+
+-- PERCENTILES
+
+-- Questions
+/*
+Use the NTILE functionality to divide the accounts into 4 levels in terms of the amount of standard_qty for their orders.
+Your resulting table should have the account_id, the occurred_at time for each order, the total amount of standard_qty paper
+purchased, and one of four levels in a standard_quartile column.
+*/
+
+select account_id, occurred_at, standard_qty,
+NTILE (4) over (PARTITION BY account_id order by standard_qty desc) as quartile
+from orders
+
